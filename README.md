@@ -4,3 +4,5 @@ a web application using HTML, CSS, and JavaScript that uses a RESTful web API im
 
 the songs are pusedo songs that I am using to get comfortable working with data bases.
 
+able to perform basic CRUD (Create, Read, Update, and Delete) operations on the music
+database
