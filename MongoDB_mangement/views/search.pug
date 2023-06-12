@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Song Search
+    link(rel="stylesheet", href="searchstyles.css")
+  header
+    nav
+      ul
+        li
+          a(href="/") Home
+        li
+          a(href="/search") Search by Genre
+        li
+          a(href="/update") Update a Song
+        li
+          a(href="/add") Add a Song
+        li
+          a(href="/user_song") List All Songs
+  body
+    h1 Song Search
+    form(action="/search/results", method="GET")
+      label(for="genre") Search by Genre:
+      select(name="genre", id="genre")
+        option(value="") Select Genre
+        each genre in genres
+          option(value=genre)= genre
+      button(type="submit") Search
+  
+    if songs && songs.length > 0
+      h2 Search Results
+      table
+        thead
+          tr
+            th Title
+            th Artist
+            th Genre
+            th Popularity
+            th Release Date
+        tbody
+          each song in songs
+            tr
+              td= song.title
+              td= song.artist
+              td= song.genre.join(', ')
+              td= song.popularity
+              td= song.releaseDate.toDateString()
+    else
+      if songs && songs.length === 0
+        p No songs found.
+      else
+        // Handle the scenario when the search has not been performed yet or when there is an error
+        p Please perform a search or try again later.

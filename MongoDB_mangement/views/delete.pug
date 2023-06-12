@@ -1,0 +1,30 @@
+// Inside the tbody section of your song listing template
+tr(data-song-id=song._id)
+  td= song.title
+  // Other song attributes
+  td
+    button(onclick=`deleteSong('${song._id}')`) Delete
+
+script.
+  function deleteSong(songId) {
+    if (confirm('Are you sure you want to delete this song?')) {
+      fetch(`/delete/${songId}`, {
+        method: 'DELETE'
+      })
+        .then(response => {
+          if (response.ok) {
+            // Remove the deleted song row from the DOM
+            const row = document.querySelector(`tr[data-song-id="${songId}"]`);
+            if (row) {
+              row.remove();
+            }
+          } else {
+            console.error('Error deleting song:', response.status);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting song:', error);
+        });
+    }
+  }
+  

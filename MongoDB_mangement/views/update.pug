@@ -1,0 +1,68 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Update Song
+    link(rel="stylesheet", href="updatestyles.css")
+  body
+    h1 Update Song
+    header
+      nav
+        ul
+          li
+            a(href="/") Home
+          li
+            a(href="/search") Search by Genre
+          li
+            a(href="/update") Update a Song
+          li
+            a(href="/add") Add a Song
+          li
+            a(href="/user_song") List All Songs
+
+    if songs
+      form(action="/update/#{songs._id}", method="POST", enctype="multipart/form-data")
+        label(for="songId") Select Song:
+        select(name="songId" id="songId")
+          option(value="") Select Song
+          option(value=songs._id selected=(selectedSong && selectedSong._id.toString() === songs._id.toString()))= songs.title
+
+    if selectedSong
+      h2 Update Song: #{selectedSong.title}
+      if !selectedSong.editMode
+        button(type="button", onclick=`enableEditMode('${selectedSong._id}')`) Enable Modification
+      else
+        form(action=`/update/${selectedSong._id}`, method="POST", enctype="multipart/form-data")
+          label(for="title") Title:
+          input(type="text" id="title" name="title" value=selectedSong.title required)
+          br
+          label(for="artist") Artist:
+          input(type="text" id="artist" name="artist" value=selectedSong.artist required)
+          br
+          label(for="genre") Genre:
+          input(type="text" id="genre" name="genre" value=selectedSong.genre.join(', ') required)
+          br
+          label(for="popularity") Popularity:
+          input(type="number" id="popularity" name="popularity" min="0" max="10" value=selectedSong.popularity required)
+          br
+          label(for="releaseDate") Release Date:
+          input(type="date" id="releaseDate" name="releaseDate" value=selectedSong.releaseDate.toISOString().substr(0, 10) required)
+          br
+          input(type="hidden" name="_method" value="PUT")
+          input(type="submit" value="Update")
+    else
+      p No song selected
+
+  script.
+    function enableEditMode(songId) {
+      fetch(`/enableEditMode/${songId}`, { method: 'PUT' })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          }
+        })
+        .catch(error => console.error(error));
+    }

@@ -1,0 +1,67 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title User Songs
+    link(rel="stylesheet", href="user_songstyles.css")
+  
+  body
+    h1 User Songs
+    header
+      nav
+        ul
+          li
+            a(href="/") Home
+          li
+            a(href="/search") Search by Genre
+          li
+            a(href="/update") Update a Song
+          li
+            a(href="/add") Add a Song
+          li
+            a(href="/user_song") List All Songs
+  
+    table
+      thead
+        tr
+          th Title
+          th Artist
+          th Genre
+          th Popularity
+          th Release Date
+          th Action
+      tbody
+        each song in songs
+          tr(data-song-id=song._id)
+            td= song.title
+            td= song.artist
+            td= song.genre.join(', ')
+            td= song.popularity
+            td= song.releaseDate.toDateString()
+            td
+              button(onclick=`deleteSong('${song._id}')`) Delete
+
+  script.
+    function deleteSong(songId) {
+      if (confirm('Are you sure you want to delete this song?')) {
+        fetch(`/delete/${songId}`, {
+          method: 'DELETE'
+        })
+          .then(response => {
+            if (response.ok) {
+              // Remove the deleted song row from the DOM
+              const row = document.querySelector(`tr[data-song-id="${songId}"]`);
+              if (row) {
+                row.remove();
+              }
+            } else {
+              console.error('Error deleting song:', response.status);
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting song:', error);
+          });
+      }
+    }
